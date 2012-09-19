@@ -7,8 +7,7 @@ import Data.List(isPrefixOf)
 import System.IO(hFlush, stdout)
 
 main = do
-	bn <- takeWhile (/= '.') `fmap` getProgName
-	args <- getArgs
+	bn : args <- getArgs
 	case args of
 		("list" : largs) -> listDiary bn largs
 		("remove" : rargs) -> removeDiary bn rargs
