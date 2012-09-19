@@ -2,10 +2,11 @@ build-type:		Simple
 cabal-version:		>= 1.6
 
 name:			mypage
-version:		0.0.1
+version:		0.0.2
 
 executable		mypage
+    hs-source-dirs:	src
     main-is:		myblog.hs
-    other-modules:	MakeHtml, MyblogParser, MyblogParserPappy, Parse, Pos,
-        Processing, ReadConfig, ReadConfigPappy, XMLFile
+    other-modules:	MakeHtml, MyblogParser, MyblogParserPappy, Parse,
+        Pos, Processing, ReadConfig, ReadConfigPappy, XMLFile
     build-depends:	base > 3 && < 5, yjftp-libs, process, uuid, HaXml
