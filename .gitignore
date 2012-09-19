@@ -4,3 +4,5 @@
 footer.txt
 config.txt
 diary.txt
+/dist/
+*.ebuild
