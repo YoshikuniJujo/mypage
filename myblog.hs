@@ -33,7 +33,7 @@ putDiary blogName fn = do
 	(new', uuid) <- addUUID new
 	let	dat = maybe (addNew new' olds) (\u -> editDiary u new' olds) uuid
 	makeXmlfile (blogName ++".xml") dat
-	writeFile (blogName ++ ".html") $ makeHtml dat
+	writeFile (blogName ++ ".html") =<< makeHtml dat
 
 addNew :: Diary -> [Diary] -> [Diary]
 addNew d@(tags, cnt) ds = let
@@ -61,7 +61,7 @@ removeDiary blogName [u] = do
 	olds <- xmlfileToData $ blogName ++ ".xml"
 	let	new = deleteDiary u olds
 	makeXmlfile (blogName ++ ".xml") $ rewriteUuidlen new
-	writeFile (blogName ++ ".html") $ makeHtml new
+	writeFile (blogName ++ ".html") =<< makeHtml new
 
 deleteDiary :: String -> [Diary] -> [Diary]
 deleteDiary u = reverse . dd . reverse
@@ -102,7 +102,7 @@ moveDiary blogName [u, p] = do
 		r = deleteDiary u olds
 		new = take (read p) r ++ [d] ++ drop (read p) r
 	makeXmlfile (blogName ++ ".xml") $ rewriteUuidlen new
-	writeFile (blogName ++ ".html") $ makeHtml new
+	writeFile (blogName ++ ".html") =<< makeHtml new
 
 makeText :: Diary -> String
 makeText (tags, cnt) =
