@@ -3,6 +3,7 @@ module MakeHtml (
 ) where
 
 import Data.Maybe
+import Data.Char
 
 makeHtml :: [([(String, String)], [String])] -> IO String
 makeHtml dat = do
@@ -10,8 +11,22 @@ makeHtml dat = do
 	return $ xmlheader ++ doctype ++ htmlOpen ++ header ++
 		body (unlines (map makeTC dat) ++ footer) ++ htmlClose
 
+makeLink1FromString :: String -> String
+makeLink1FromString src = makeLink1 (takeWhile (/= ',') src) $
+	dropWhile isSpace $ tail $ dropWhile (/= ',') src
+
+makeLink1 :: String -> String -> String
+makeLink1 title address =
+	"<p><a href=\"" ++ address ++ "\">" ++ title ++ "</a></p>"
+
+makeLinks :: [String] -> String
+makeLinks = unlines . map makeLink1FromString
+
 makeTC :: ([(String, String)], [String]) -> String
-makeTC (tags, cnt) = makeTitle tags ++ "<p>" ++ makeContent cnt ++ "</p>\n"
+makeTC (tags, cnt) = makeTitle tags ++
+	makeLinks (map snd $ filter ((== "link") . fst) tags) ++
+--	makeLink1FromString "gentoo, http://gentoo.org" ++
+	"<p>" ++ makeContent cnt ++ "</p>\n"
 
 makeContent :: [String] -> String
 makeContent =

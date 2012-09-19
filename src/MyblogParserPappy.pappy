@@ -47,6 +47,6 @@ dummy :: { () }
 parseInputText :: String -> ([(String, String)], [String])
 parseInputText txt = case myblogParserPappyTop (myblogParserPappyParse "" txt) of
 	Parsed p _ _ -> p
-	NoParse e -> error $ show e
+	NoParse e -> error $ "parseInputText: " ++ show e
 
 }
