@@ -4,17 +4,37 @@ import MyblogParser(parseInputText)
 import Processing(addUUID, Diary, lookD)
 import System.Environment(getProgName, getArgs)
 import Data.List(isPrefixOf)
+import Data.Maybe
 import System.IO(hFlush, stdout)
+import System.Cmd
+import ReadConfig
+import Control.Applicative
+import Network.Yjftp
 
 main = do
 	bn : args <- getArgs
+	config <- parseConfigFile <$> readFile "config.txt"
+	let	editor = fromMaybe (error "no editor") $ lookup "editor" config
+		server = fromMaybe (error "no server") $ lookup "server" config
+		directory = fromMaybe (error "no diectory") $ lookup "directory" config
+		account = fromMaybe (error "no account") $ lookup "account" config
 	case args of
 		("list" : largs) -> listDiary bn largs
 		("remove" : rargs) -> removeDiary bn rargs
-		("edit" : rargs) -> getDiary bn rargs
-		("new" : nargs) -> newDiary bn nargs
+		("edit" : rargs) -> do
+			getDiary bn rargs
+			rawSystem editor ["diary.txt"]
+			putDiary bn "diary.txt"
+			return ()
+		("new" : nargs) -> do
+			newDiary bn nargs
+			rawSystem editor ["diary.txt"]
+			putDiary bn "diary.txt"
+			return ()
 		("move" : margs) -> moveDiary bn margs
 		("rewrite" : rargs) -> rewriteUuidlenIO bn
+		("upload" : _) -> yjftp (Just Put) (Just $ bn ++ ".html")
+			(Just server) (Just account) (Just directory) Nothing
 		[fn] -> putDiary bn fn
 
 newDiary :: String -> [String] -> IO ()

@@ -1,6 +1,6 @@
-MyblogParserPappy.hs
-myblog.html
-myblog.xml
+*Pappy.hs
+*.html
+*.xml
 footer.txt
 config.txt
 diary.txt

@@ -1,0 +1,32 @@
+parser ReadConfigPappy:
+
+{
+
+import Data.Char
+
+}
+
+top Top
+
+Top :: { [(String, String)] } = t:one+ "."	-> { t }
+
+one :: { (String, String) }
+	= k:keyChar+ ":" space* v:valChar+ "\n"	-> { (k, v) }
+
+keyChar :: Char
+	= k:Char &{ isAlphaNum k }		-> { k }
+
+valChar :: Char
+	= v:Char &{ not $ isSpace v }		-> { v }
+
+space :: { () }
+	= s:Char &{ isSpace s }			-> { () }
+
+{
+
+parseConfigFile :: String -> [(String, String)]
+parseConfigFile txt = case readConfigPappyTop (readConfigPappyParse "" txt) of
+	Parsed p _ _ -> p
+	NoParse e -> error $ show e
+
+}
