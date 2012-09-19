@@ -1,0 +1,52 @@
+parser MyblogParserPappy:
+
+{
+
+import Data.Char
+
+}
+
+top Top
+
+Top :: { ([(String, String)], [String]) }
+	= tvs:tagValue* "\n" c:contents		-> { (tvs, c) }
+
+tagValue :: { (String, String) }
+	= t:tagChar+ spaceChar* ":" spaceChar* v:valChar* "\n"	-> { (t, v) }
+
+contents :: { [String] }
+	= ls:line* ".\n"		-> { ls }
+
+line :: String
+	= !"." s:noNLChar* "\n"	-> { s }
+
+tagChar :: Char
+	= c:Char &{ isAlphaNum c }	-> { c }
+
+valChar :: Char
+	= c:Char &{ c `notElem` "\n" }	-> { c }
+
+spaceChar :: Char
+	= c:Char &{ isSpace c }		-> { c }
+
+noNLChar :: Char
+	= !"\n" c:anyChar	-> { c }
+
+noNLChar_ :: Char
+	= c:Char &{ c /= '\n' }	-> { c }
+
+anyChar :: Char
+	= c:Char		-> { c }
+
+dummy :: { () }
+	= l:dummy "a" dummy	-> { () }
+	/ "a" dummy		-> { () }
+
+{
+
+parseInputText :: String -> ([(String, String)], [String])
+parseInputText txt = case myblogParserPappyTop (myblogParserPappyParse "" txt) of
+	Parsed p _ _ -> p
+	NoParse e -> error $ show e
+
+}
